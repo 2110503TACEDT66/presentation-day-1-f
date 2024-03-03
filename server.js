@@ -40,6 +40,8 @@ app.use('/api/v1/restaurants', restaurants);
 const reservations = require('./routes/reservations');
 app.use('/api/v1/reservations',reservations);
 
+const menus = require('./routes/menus');
+app.use('/api/v1/menus',menus);
 
 const PORT = process.env.PORT || 5000 ;
 

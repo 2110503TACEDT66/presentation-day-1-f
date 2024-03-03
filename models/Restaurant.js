@@ -1,3 +1,4 @@
+const timeSchema = require('mongodb');
 const mongoose = require('mongoose');
 
 const RestaurantSchema = new mongoose.Schema({
@@ -12,25 +13,14 @@ const RestaurantSchema = new mongoose.Schema({
         type:String,
         required: [true,'Please add an address']
     },
-    district:{
-        type:String,
-        require:[true,'Please adda district']
-    },
-    province:{
-        type:String,
-        required:[true,'Please add a province']
-    },
-    postalcode:{
-        type:String,
-        required:[true,'Please add a postalcode'],
-        maxlength:[5,'Postal Code can not be more than 5 digits']
-    },
     tel:{
-        type:String
-    },
-    region:{
         type:String,
-        required:[true,'Please add a region']
+        required: [true,'Please add an telephone number'],
+        length:[10,'Name can not be more or less than 10 charector']
+    },
+    openingHours: {
+        open: { type: String, required: true },
+        close: { type: String, required: true }
     }
 },{
     toJSON:{virtuals:true},
@@ -49,6 +39,10 @@ RestaurantSchema.pre('deleteOne',{document:true,query:false},async function(next
     console.log(`Reservation being remove form restaurant ${this._id}`);
     await this.model('Reservation').deleteMany({restrautant:this._id});
     next();
+    console.log(`All menus being remove form restaurant ${this._id}`);
+    await this.model('Menu').deleteMany({restrautant:this._id});
+    next();
 });
+
 
 module.exports=mongoose.model('Restaurant',RestaurantSchema);
