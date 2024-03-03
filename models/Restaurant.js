@@ -40,7 +40,7 @@ const RestaurantSchema = new mongoose.Schema({
 RestaurantSchema.virtual('reservations',{
     ref:'Reservation',
     localField:'_id',
-    foreignField:'restautant',
+    foreignField:'restaurant',
     justOne:false
 });
 
