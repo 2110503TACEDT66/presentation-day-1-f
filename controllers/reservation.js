@@ -75,6 +75,29 @@ exports.addReservation=async (req,res,next)=>{
         if(!restaurant){
             return res.status(404).json({sucess:false,massage:`No restaurant with the id of ${req.parms.restaurantId}`});
         }
+
+        //convert time to int
+        const { apptDate } = req.body;
+        const { open, close } = restaurant.openingHours;
+        const apptdate = apptDate.slice(11,16);
+        const openTime = parseInt(open.slice(0,2))*60 + parseInt(open.slice(3,5));
+        let closeTime = parseInt(close.slice(0,2))*60 + parseInt(close.slice(3,5));
+        let apptTime = parseInt(apptdate.slice(0,2))*60 + parseInt(apptdate.slice(3,5));
+        // console.log(closeTime)
+        // console.log(openTime)
+        // console.log(apptTime)
+        if(closeTime < openTime) {
+            closeTime += 1440;
+            if(apptTime < closeTime && apptTime< openTime) {
+                apptTime += 1440;
+            }   
+        }
+        if(apptTime >= closeTime || apptTime < openTime) {
+            return res.status(400).json({
+                success: false,
+                message: 'Reservation must be within restaurant opening hours'
+            });
+        }
         const reservation = await Reservation.create(req.body);
         res.status(200).json({
             sucess: true,
