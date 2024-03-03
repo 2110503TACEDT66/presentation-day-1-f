@@ -4,30 +4,42 @@ const Menu  = require('../models/Menu');
 
 exports.getMenu = async (req,res,next)=>{
     try{
-        let menu = await Restaurant.findById(req.params.id).name;
-        menu = menu.populate({
-            path:'menu',
-            select:'name price'
+        const menu = await Menu.find({restaurant:req.params.id}).populate({
+            path:'restaurant',
+            select:'name'
         });
         if(!menu){
-            return res.status(400).json({sucess:false});
+            return res.status(400).json({sucess:false,massage:`No restaurant with the id of ${req.params.id}`});
         }
         res.status(200).json({
             sucess:true,
             date:menu});
     }catch(err){
-        res.status(400).json({sucess:false});
+        res.status(400).json({sucess:false,massage:'Cannot find Menu'});
     }
 };
 
-exports.createMenu = async (req,res,next)=>{
-    const menu = await Menu.create(req.body);
-    res.status(201).json({
-        sucess:true,
-        data:menu});
+exports.addMenu=async (req,res,next)=>{
+    try{
+        const restaurant = await Restaurant.findById(req.body.restaurant);
+        if(!restaurant){
+            return res.status(404).json({sucess:false,massage:`No restaurant with the id of ${req.body.restaurant}`});
+        }
+        const menu = await Menu.create(req.body);
+        res.status(200).json({
+            sucess: true,
+            data:menu
+        });
+    }catch(error){
+        console.log(error);
+        return res.status(500).json({
+            sucess:false,
+            massage:'Cannot Create Menu'
+        });
+    }
 };
 
-exports.updateMenu= async (req,res,next)=>{
+exports.updateMenu = async (req,res,next)=>{
     try{
         const menu = await Menu.findByIdAndUpdate(req.params.id,req.body,{
             new:true,

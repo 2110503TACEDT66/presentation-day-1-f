@@ -1,4 +1,3 @@
-const timeSchema = require('mongodb');
 const mongoose = require('mongoose');
 
 const RestaurantSchema = new mongoose.Schema({
@@ -10,8 +9,10 @@ const RestaurantSchema = new mongoose.Schema({
         maxlength:[50,'Name can not be more than 50 charector']
     },
     address:{
-        type:String,
-        required: [true,'Please add an address']
+        district:{type:String,required: [true,'Please add an address']},
+        province:{type:String,required: [true,'Please add an address']},
+        postalcode:{type:String,required: [true,'Please add an address'],maxlength:5},
+        region:{type:String,required: [true,'Please add an address']}
     },
     tel:{
         type:String,
@@ -33,7 +34,6 @@ RestaurantSchema.virtual('reservations',{
     foreignField:'restaurant',
     justOne:false
 });
-
 
 RestaurantSchema.pre('deleteOne',{document:true,query:false},async function(next){
     console.log(`Reservation being remove form restaurant ${this._id}`);
