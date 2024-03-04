@@ -141,7 +141,7 @@ exports.updateReservation=async (req,res,next)=>{
             new:true,
             runValidators:true
         });
-        res.status(200).json({
+        res.status(201).json({
             sucess: true,
             data:reservation
         });
