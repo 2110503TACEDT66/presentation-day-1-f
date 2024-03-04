@@ -76,16 +76,14 @@ exports.addReservation=async (req,res,next)=>{
             return res.status(404).json({sucess:false,massage:`No restaurant with the id of ${req.parms.restaurantId}`});
         }
 
-        //convert time to int
+        //Check in open-close range
         const { apptDate } = req.body;
         const { open, close } = restaurant.openingHours;
         const apptdate = apptDate.slice(11,16);
         const openTime = parseInt(open.slice(0,2))*60 + parseInt(open.slice(3,5));
         let closeTime = parseInt(close.slice(0,2))*60 + parseInt(close.slice(3,5));
         let apptTime = parseInt(apptdate.slice(0,2))*60 + parseInt(apptdate.slice(3,5));
-        // console.log(closeTime)
-        // console.log(openTime)
-        // console.log(apptTime)
+
         if(closeTime < openTime) {
             closeTime += 1440;
             if(apptTime < closeTime && apptTime< openTime) {
@@ -114,6 +112,7 @@ exports.addReservation=async (req,res,next)=>{
 
 exports.updateReservation=async (req,res,next)=>{
     try{
+        
         let reservation = await Reservation.findById(req.params.id);
         if(!reservation){
             return res.status(404).json({sucess:false,massage:`No reservation with the id of ${req.params.id}`});
@@ -123,6 +122,29 @@ exports.updateReservation=async (req,res,next)=>{
                 sucess:false,
                 massage:`User ${req.user.id} is not authorize to update this bootcamp`
             });
+        }
+
+        //Check in open-close range
+        const { apptDate } = req.body;
+        if(apptDate) {
+            const restaurant = await Restaurant.findById(reservation.restaurant);
+            const { open, close } = restaurant.openingHours;
+            const apptdate = apptDate.slice(11,16);
+            const openTime = parseInt(open.slice(0,2))*60 + parseInt(open.slice(3,5));
+            let closeTime = parseInt(close.slice(0,2))*60 + parseInt(close.slice(3,5));
+            let apptTime = parseInt(apptdate.slice(0,2))*60 + parseInt(apptdate.slice(3,5));
+            if(closeTime < openTime) {
+                closeTime += 1440;
+                if(apptTime < closeTime && apptTime< openTime) {
+                    apptTime += 1440;
+                }   
+            }
+            if(apptTime >= closeTime || apptTime < openTime) {
+                return res.status(400).json({
+                    success: false,
+                    message: 'Reservation must be within restaurant opening hours'
+                });
+            }
         }
         reservation = await Reservation.findByIdAndUpdate(req.params.id,req.body,{
             new:true,
