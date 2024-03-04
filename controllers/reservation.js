@@ -34,13 +34,22 @@ exports.getReservation=async (req,res,next)=>{
         const reservation = await Reservation.findById(req.params.id).populate({
             path:'restaurant',
             select:'name province tel'
-        });
+        }).populate({
+            path: 'foodOrder', 
+            model: 'Menu',
+            select: 'price' 
+          });
         if(!reservation){
             return res.status(404).json({success:false,massage:`No reservation with the id of ${req.parms.id}`});
         }
+        let totalPrice = 0;
+        reservation.foodOrder.forEach(menuItem => {
+          totalPrice += menuItem.price;
+        });
         res.status(200).json({
-            success: true,
-            data:reservation
+          success: true,
+          data: reservation,
+          totalPrice: totalPrice
         });
     }catch(error){
         console.log(error);

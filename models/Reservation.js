@@ -38,4 +38,12 @@ ReservationSchema.methods.removeItem = function(menuItemId) {
     return this.save();
 };
 
+ReservationSchema.methods.paying = function() {
+    let price = 0;
+    for (let i = 0; i < this.foodOrder.length; i++) {
+       price = price + this.foodOrder[i].price;
+    }
+    return price;
+};
+
 module.exports=mongoose.model('Reservation',ReservationSchema);
