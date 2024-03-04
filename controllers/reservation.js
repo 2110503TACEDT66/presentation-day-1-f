@@ -20,7 +20,7 @@ exports.getReservations=async (req,res,next)=>{
         console.log(error);
         return res.status(500).json({
             sucess:false,
-            massage:'Cannot find Appointment'
+            massage:'Cannot find Reservation'
         });
     }
 };
@@ -107,7 +107,7 @@ exports.updateReservation=async (req,res,next)=>{
         if(reservation.user.toString()!==req.user.id&&req.user.role!=='admin'){
             return res.status(401).json({
                 sucess:false,
-                massage:`User ${req.user.id} is not authorize to update this bootcamp`
+                massage:`User ${req.user.id} is not authorize to update this reservation`
             });
         }
 
@@ -159,7 +159,7 @@ exports.deleteReservation=async (req,res,next)=>{
         if(reservation.user.toString()!==req.user.id&&req.user.role!=='admin'){
             return res.status(401).json({
                 sucess:false,
-                massage:`User ${req.user.id} is not authorize to delete this bootcamp`
+                massage:`User ${req.user.id} is not authorize to delete this reservation`
             });
         }
         await reservation.deleteOne();
