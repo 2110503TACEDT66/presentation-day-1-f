@@ -8,6 +8,10 @@ exports.getReservations=async (req,res,next)=>{
         query = Reservation.find({user:req.user.id}).populate({
             path:'restaurant',
             select:'name province tel'
+        });}else{
+        query = Reservation.find().populate({
+            path:"restaurant",
+            select:'name tel'
         });}
     try{
         const reservations = await query;
@@ -107,7 +111,7 @@ exports.updateReservation=async (req,res,next)=>{
         if(reservation.user.toString()!==req.user.id&&req.user.role!=='admin'){
             return res.status(401).json({
                 sucess:false,
-                massage:`User ${req.user.id} is not authorize to update this reservation`
+                massage:`User ${req.user.id} is not authorize to update this bootcamp`
             });
         }
 
@@ -159,7 +163,7 @@ exports.deleteReservation=async (req,res,next)=>{
         if(reservation.user.toString()!==req.user.id&&req.user.role!=='admin'){
             return res.status(401).json({
                 sucess:false,
-                massage:`User ${req.user.id} is not authorize to delete this reservation`
+                massage:`User ${req.user.id} is not authorize to delete this bootcamp`
             });
         }
         await reservation.deleteOne();
