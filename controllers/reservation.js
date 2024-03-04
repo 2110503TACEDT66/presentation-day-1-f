@@ -151,13 +151,14 @@ exports.updateReservation=async (req,res,next)=>{
                     message: 'Reservation must be within restaurant opening hours'
                 });
             }
+            if(apptTime > closeTime - 60) {
+                return res.status(400).json({
+                    success: false,
+                    message: 'Reservation must be befor restaurant close time 1 hour'
+                });
+            }
         }
-        if(apptTime > closeTime-60) {
-            return res.status(400).json({
-                success: false,
-                message: 'Reservation must be befor restaurant close time 1 hour'
-            });
-        }
+        
         reservation = await Reservation.findByIdAndUpdate(req.params.id,req.body,{
             new:true,
             runValidators:true
