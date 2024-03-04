@@ -25,10 +25,6 @@ const ReservationSchema = new mongoose.Schema({
     }
 });
 
-ReservationSchema.statics.countFoodOrders = function(callback) {
-    return this.countDocuments({'foodOrder.0': {$exists: true}}, callback);
-};
-
 ReservationSchema.methods.addItem = function(menuItemId) {
     this.foodOrder.push(menuItemId);
     return this.save();

@@ -8,21 +8,7 @@ exports.getReservations=async (req,res,next)=>{
         query = Reservation.find({user:req.user.id}).populate({
             path:'restaurant',
             select:'name province tel'
-        });
-    }else{
-        if(req.params.restaurantId){
-            console.log(req.params.restaurantId);
-            query = Reservation.find({hospital:req.params.restaurantId}).populate({
-                path:'restaurant',
-                select:'name province tel'
-            });
-        }else{
-        query = Reservation.find().populate({
-            path:'restaurant',
-            select:'name province tel'
-        });
-        }
-    }
+        });}
     try{
         const reservations = await query;
         res.status(200).json({
@@ -199,7 +185,7 @@ exports.orderFood =async (req,res,next)=>{
                 massage:`Cannot find reservation with id of ${req.params.id}`
             });
         }
-        if(reservation.countFoodOrders>=10&&req.user.role!=='admin'){
+        if(reservation.foodOrder.length>=10&&req.user.role!=='admin'){
             return res.status(400).json({
                 sucess:false,
                 massage:`User with the id ${req.user.id} has already order more than 10 item`
@@ -209,7 +195,7 @@ exports.orderFood =async (req,res,next)=>{
         if(!item){
             return res.status(404).json({sucess:false,massage:`There are no such item on menu`});
         }
-        if(! item.restaurant.equals(reservation.restaurant)){
+        if(!item.restaurant.equals(reservation.restaurant)){
             return res.status(404).json({sucess:false,massage:`Your reserved restaurant does not have the current item`});
         }
         reservation.addItem(item);
