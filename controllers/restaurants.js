@@ -58,13 +58,14 @@ exports.getRestaurants = async(req,res,next)=>{
 };
 exports.getRestaurant = async (req,res,next)=>{
     try{
-        const restaurant = await Restaurant.findById(req.params.id);
+        const restaurant = await Restaurant.findById(req.params.id).populate('menus');
         if(!restaurant){
             return res.status(400).json({sucess:false});
         }
         res.status(200).json({
             sucess:true,
-            data:restaurant});
+            data:restaurant
+        });
     }catch(err){
         res.status(400).json({sucess:false});
     }

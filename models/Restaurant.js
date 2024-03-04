@@ -35,6 +35,13 @@ RestaurantSchema.virtual('reservations',{
     justOne:false
 });
 
+RestaurantSchema.virtual('menus',{
+    ref:'Menu',
+    localField:'_id',
+    foreignField:'restaurant',
+    justOne:false
+});
+
 RestaurantSchema.pre('deleteOne',{document:true,query:false},async function(next){
     console.log(`Reservation being remove form restaurant ${this._id}`);
     await this.model('Reservation').deleteMany({restrautant:this._id});

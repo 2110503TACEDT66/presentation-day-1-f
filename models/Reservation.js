@@ -15,11 +15,23 @@ const ReservationSchema = new mongoose.Schema({
         ref:'Restaurant',
         require:true
     },
+    foodOrder: [{
+        type: mongoose.Schema.ObjectId,
+        ref: 'Menu'
+      }],
     createdAt:{
         type:Date,
         default:Date.now
     }
-}
-);
+});
+
+ReservationSchema.statics.countFoodOrders = function(callback) {
+    return this.countDocuments({'foodOrder.0': {$exists: true}}, callback);
+};
+
+ReservationSchema.methods.addItem = function(menuItemId) {
+    this.foodOrder.push(menuItemId);
+    return this.save();
+};
 
 module.exports=mongoose.model('Reservation',ReservationSchema);

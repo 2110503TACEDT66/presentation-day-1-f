@@ -6,8 +6,8 @@ const MenuSchema = new mongoose.Schema({
         require:true
     },
     price:{
-        type:String,
-        require :true
+        type:Number,
+        require :[true,'Not a number']
     },
     restaurant:{
         type:mongoose.Schema.ObjectId,

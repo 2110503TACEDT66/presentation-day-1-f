@@ -1,5 +1,6 @@
 const Reservation = require('../models/Reservation');
 const Restaurant  = require('../models/Restaurant');
+const Menu  = require('../models/Menu');
 
 exports.getReservations=async (req,res,next)=>{
     let query;
@@ -185,6 +186,42 @@ exports.deleteReservation=async (req,res,next)=>{
         return res.status(500).json({
             sucess:false,
             massage:'Cannot delete Reservation'
+        });
+    }
+};
+
+exports.orderFood =async (req,res,next)=>{
+    try{
+        const reservation = await Reservation.findById(req.params.id);
+        if(!reservation){
+            return res.status(400).json({
+                sucess:false,
+                massage:`Cannot find reservation with id of ${req.params.id}`
+            });
+        }
+        if(reservation.countFoodOrders>=10&&req.user.role!=='admin'){
+            return res.status(400).json({
+                sucess:false,
+                massage:`User with the id ${req.user.id} has already order more than 10 item`
+            });
+        }
+        const item = await Menu.findById(req.body.id);
+        if(!item){
+            return res.status(404).json({sucess:false,massage:`There are no such item on menu`});
+        }
+        if(! item.restaurant.equals(reservation.restaurant)){
+            return res.status(404).json({sucess:false,massage:`Your reserved restaurant does not have the current item`});
+        }
+        reservation.addItem(item);
+        res.status(200).json({
+            sucess: true,
+            data:reservation
+        });
+    }catch(error){
+        console.log(error);
+        return res.status(500).json({
+            sucess:false,
+            massage:'Cannot Order Food'
         });
     }
 };
