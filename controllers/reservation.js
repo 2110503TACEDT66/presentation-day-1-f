@@ -88,7 +88,7 @@ exports.addReservation=async (req,res,next)=>{
             });
         }
         const reservation = await Reservation.create(req.body);
-        res.status(200).json({
+        res.status(201).json({
             sucess: true,
             data:reservation
         });
@@ -141,7 +141,7 @@ exports.updateReservation=async (req,res,next)=>{
             new:true,
             runValidators:true
         });
-        res.status(201).json({
+        res.status(200).json({
             sucess: true,
             data:reservation
         });
