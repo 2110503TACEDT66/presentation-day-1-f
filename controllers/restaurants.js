@@ -47,12 +47,12 @@ exports.getRestaurants = async(req,res,next)=>{
             }
         }
         res.status(200).json({
-            sucess:true, 
+            success:true, 
             count: restaurants.length,
             pagination,
             data:restaurants});
     }catch(err){
-        res.status(400).json({sucess:false});
+        res.status(400).json({success:false});
     }
     
 };
@@ -60,21 +60,21 @@ exports.getRestaurant = async (req,res,next)=>{
     try{
         const restaurant = await Restaurant.findById(req.params.id).populate('menus');
         if(!restaurant){
-            return res.status(400).json({sucess:false});
+            return res.status(400).json({success:false});
         }
         res.status(200).json({
-            sucess:true,
+            success:true,
             data:restaurant
         });
     }catch(err){
-        res.status(400).json({sucess:false});
+        res.status(400).json({success:false});
     }
 };
 
 exports.createRestaurant = async (req,res,next)=>{
     const restaurant = await Restaurant.create(req.body);
     res.status(201).json({
-        sucess:true,
+        success:true,
         data:restaurant});
 };
 exports.updateRestaurant= async (req,res,next)=>{
@@ -84,23 +84,23 @@ exports.updateRestaurant= async (req,res,next)=>{
             runValidator:true
         });
         if(!restaurant){
-            return res.status(400).json({sucess:false});
+            return res.status(400).json({success:false});
         }
-        res.status(200).json({sucess:true,data:restaurant});
+        res.status(200).json({success:true,data:restaurant});
     }catch(err){
-        res.status(400).json({sucess:false});
+        res.status(400).json({success:false});
     }
 };
 exports.deleteRestaurant=async(req,res,next)=>{
     try{
         const restaurant = await Restaurant.findById(req.params.id);
         if(!restaurant){
-            return res.status(400).json({sucess:false});
+            return res.status(400).json({success:false});
         }
         await restaurant.deleteOne();
-        res.status(200).json({sucess:true,data:{}});
+        res.status(200).json({success:true,data:{}});
     }catch(err){
-        res.status(400).json({sucess:false});
+        res.status(400).json({success:false});
     }
 };
 

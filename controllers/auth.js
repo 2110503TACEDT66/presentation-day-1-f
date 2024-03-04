@@ -12,10 +12,10 @@ exports.register=async(req,res,next)=>{
             role
         });
         //const token = user.getSignedJwtToken();
-        //res.status(200).json({sucess:true,token});
+        //res.status(200).json({success:true,token});
         sendTokenResponse(user,200,res);
     }catch(err){
-        res.status(400).json({sucess:false});
+        res.status(400).json({success:false});
         console.log(err.stack);
     }
 
@@ -26,7 +26,7 @@ exports.login = async (req,res,next)=>{
     const {email,password} = req.body;
 
     if(!email||!password){
-        return res.status(400),json({sucess:false, msg:'Please provide an email and password'});
+        return res.status(400),json({success:false, msg:'Please provide an email and password'});
     }
     const user = await
     User.findOne({email}).select('+password');
@@ -39,10 +39,10 @@ exports.login = async (req,res,next)=>{
     }
 
     //const token = user.getSignedJwtToken();
-    //res.status(200).json({sucess:true,token});
+    //res.status(200).json({success:true,token});
     sendTokenResponse(user,200,res);
 }catch(err){
-    return res.status(401).json({sucess:false,msg:'Cannot convert email or password to string'});
+    return res.status(401).json({success:false,msg:'Cannot convert email or password to string'});
 }
 }
 
@@ -56,12 +56,12 @@ const sendTokenResponse = (user,statusCode,res)=>{
     if(process.env.NODE_ENV ==='production'){
         options.secure =true;
     }
-    res.status(statusCode).cookie('token',token,options).json({sucess:true,token});
+    res.status(statusCode).cookie('token',token,options).json({success:true,token});
 }
 
 exports.getMe = async (req,res,next)=>{
     const user=await User.findById(req.user.id);
-    res.status(200).json({sucess:true,data:user});
+    res.status(200).json({success:true,data:user});
 }
 
 exports.logout = async (req,res,next)=>{
@@ -71,7 +71,7 @@ exports.logout = async (req,res,next)=>{
     });
 
     res.status(200).json({
-        sucess:true,
+        success:true,
         data:{}
     });
 }

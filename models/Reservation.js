@@ -30,4 +30,12 @@ ReservationSchema.methods.addItem = function(menuItemId) {
     return this.save();
 };
 
+ReservationSchema.methods.removeItem = function(menuItemId) {
+    const index = this.foodOrder.indexOf(menuItemId);
+    if (index !== -1) {
+        this.foodOrder.splice(index, 1);
+    }
+    return this.save();
+};
+
 module.exports=mongoose.model('Reservation',ReservationSchema);

@@ -9,13 +9,13 @@ exports.getMenu = async (req,res,next)=>{
             select:'name'
         });
         if(!menu){
-            return res.status(400).json({sucess:false,massage:`No restaurant with the id of ${req.params.id}`});
+            return res.status(400).json({success:false,massage:`No restaurant with the id of ${req.params.id}`});
         }
         res.status(200).json({
-            sucess:true,
+            success:true,
             date:menu});
     }catch(err){
-        res.status(400).json({sucess:false,massage:'Cannot find Menu'});
+        res.status(400).json({success:false,massage:'Cannot find Menu'});
     }
 };
 
@@ -23,17 +23,17 @@ exports.addMenu=async (req,res,next)=>{
     try{
         const restaurant = await Restaurant.findById(req.body.restaurant);
         if(!restaurant){
-            return res.status(404).json({sucess:false,massage:`No restaurant with the id of ${req.body.restaurant}`});
+            return res.status(404).json({success:false,massage:`No restaurant with the id of ${req.body.restaurant}`});
         }
         const menu = await Menu.create(req.body);
         res.status(200).json({
-            sucess: true,
+            success: true,
             data:menu
         });
     }catch(error){
         console.log(error);
         return res.status(500).json({
-            sucess:false,
+            success:false,
             massage:'Cannot Create Menu'
         });
     }
@@ -46,11 +46,11 @@ exports.updateMenu = async (req,res,next)=>{
             runValidator:true
         });
         if(!menu){
-            return res.status(400).json({sucess:false,massage:`No item with the id of ${req.params.id}`});
+            return res.status(400).json({success:false,massage:`No item with the id of ${req.params.id}`});
         }
-        res.status(200).json({sucess:true,data:menu});
+        res.status(200).json({success:true,data:menu});
     }catch(err){
-        res.status(400).json({sucess:false});
+        res.status(400).json({success:false});
     }
 };
 
@@ -58,17 +58,17 @@ exports.deleteMenu=async (req,res,next)=>{
     try{
         let menu = await Menu.findById(req.params.id);
         if(!menu){
-            return res.status(404).json({sucess:false,massage:`No item with the id of ${req.params.id}`});
+            return res.status(404).json({success:false,massage:`No item with the id of ${req.params.id}`});
         }
         await menu.deleteOne();
         res.status(200).json({
-            sucess: true,
+            success: true,
             data:{}
         });
     }catch(error){
         console.log(error);
         return res.status(500).json({
-            sucess:false,
+            success:false,
             massage:'Cannot delete this item'
         });
     }

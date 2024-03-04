@@ -16,14 +16,14 @@ exports.getReservations=async (req,res,next)=>{
     try{
         const reservations = await query;
         res.status(200).json({
-            sucess: true,
+            success: true,
             count:reservations.length,
             data:reservations
         });
     }catch(error){
         console.log(error);
         return res.status(500).json({
-            sucess:false,
+            success:false,
             massage:'Cannot find Reservation'
         });
     }
@@ -36,16 +36,16 @@ exports.getReservation=async (req,res,next)=>{
             select:'name province tel'
         });
         if(!reservation){
-            return res.status(404).json({sucess:false,massage:`No reservation with the id of ${req.parms.id}`});
+            return res.status(404).json({success:false,massage:`No reservation with the id of ${req.parms.id}`});
         }
         res.status(200).json({
-            sucess: true,
+            success: true,
             data:reservation
         });
     }catch(error){
         console.log(error);
         return res.status(500).json({
-            sucess:false,
+            success:false,
             massage:'Cannot find Reservation'
         });
     }
@@ -58,13 +58,13 @@ exports.addReservation=async (req,res,next)=>{
         const existedReservation = await Reservation.find({user:req.user.id});
         if(existedReservation.length>=3&&req.user.role!=='admin'){
             return res.status(400).json({
-                sucess:false,
+                success:false,
                 massage:`The user with the id ${req.user.id} has already made 3 reservation`
             });
         }
         const restaurant = await Restaurant.findById(req.params.restaurantId);
         if(!restaurant){
-            return res.status(404).json({sucess:false,massage:`No restaurant with the id of ${req.parms.restaurantId}`});
+            return res.status(404).json({success:false,massage:`No restaurant with the id of ${req.parms.restaurantId}`});
         }
 
         //Check in open-close range
@@ -87,15 +87,21 @@ exports.addReservation=async (req,res,next)=>{
                 message: 'Reservation must be within restaurant opening hours'
             });
         }
+        if(apptTime > closeTime-60) {
+            return res.status(400).json({
+                success: false,
+                message: 'Reservation must be befor restaurant close time 1 hour'
+            });
+        }
         const reservation = await Reservation.create(req.body);
         res.status(201).json({
-            sucess: true,
+            success: true,
             data:reservation
         });
     }catch(error){
         console.log(error);
         return res.status(500).json({
-            sucess:false,
+            success:false,
             massage:'Cannot Create Reservation'
         });
     }
@@ -106,11 +112,11 @@ exports.updateReservation=async (req,res,next)=>{
         
         let reservation = await Reservation.findById(req.params.id);
         if(!reservation){
-            return res.status(404).json({sucess:false,massage:`No reservation with the id of ${req.params.id}`});
+            return res.status(404).json({success:false,massage:`No reservation with the id of ${req.params.id}`});
         }
         if(reservation.user.toString()!==req.user.id&&req.user.role!=='admin'){
             return res.status(401).json({
-                sucess:false,
+                success:false,
                 massage:`User ${req.user.id} is not authorize to update this bootcamp`
             });
         }
@@ -137,18 +143,24 @@ exports.updateReservation=async (req,res,next)=>{
                 });
             }
         }
+        if(apptTime > closeTime-60) {
+            return res.status(400).json({
+                success: false,
+                message: 'Reservation must be befor restaurant close time 1 hour'
+            });
+        }
         reservation = await Reservation.findByIdAndUpdate(req.params.id,req.body,{
             new:true,
             runValidators:true
         });
         res.status(200).json({
-            sucess: true,
+            success: true,
             data:reservation
         });
     }catch(error){
         console.log(error);
         return res.status(500).json({
-            sucess:false,
+            success:false,
             massage:'Cannot update Reservation'
         });
     }
@@ -158,23 +170,23 @@ exports.deleteReservation=async (req,res,next)=>{
     try{
         let reservation = await Reservation.findById(req.params.id);
         if(!reservation){
-            return res.status(404).json({sucess:false,massage:`No reservation with the id of ${req.params.id}`});
+            return res.status(404).json({success:false,massage:`No reservation with the id of ${req.params.id}`});
         }
         if(reservation.user.toString()!==req.user.id&&req.user.role!=='admin'){
             return res.status(401).json({
-                sucess:false,
+                success:false,
                 massage:`User ${req.user.id} is not authorize to delete this bootcamp`
             });
         }
         await reservation.deleteOne();
         res.status(200).json({
-            sucess: true,
+            success: true,
             data:{}
         });
     }catch(error){
         console.log(error);
         return res.status(500).json({
-            sucess:false,
+            success:false,
             massage:'Cannot delete Reservation'
         });
     }
@@ -185,33 +197,68 @@ exports.orderFood =async (req,res,next)=>{
         const reservation = await Reservation.findById(req.params.id);
         if(!reservation){
             return res.status(400).json({
-                sucess:false,
+                success:false,
                 massage:`Cannot find reservation with id of ${req.params.id}`
+            });
+        }
+        if(reservation.user.toString()!==req.user.id&&req.user.role!=='admin'){
+            return res.status(401).json({
+                success:false,
+                massage:`User ${req.user.id} is not authorize to delete this bootcamp`
             });
         }
         if(reservation.foodOrder.length>=10&&req.user.role!=='admin'){
             return res.status(400).json({
-                sucess:false,
+                success:false,
                 massage:`User with the id ${req.user.id} has already order more than 10 item`
             });
         }
         const item = await Menu.findById(req.body.id);
         if(!item){
-            return res.status(404).json({sucess:false,massage:`There are no such item on menu`});
+            return res.status(404).json({success:false,massage:`There are no such item on menu`});
         }
         if(!item.restaurant.equals(reservation.restaurant)){
-            return res.status(404).json({sucess:false,massage:`Your reserved restaurant does not have the current item`});
+            return res.status(404).json({success:false,massage:`Your reserved restaurant does not have the current item`});
         }
         reservation.addItem(item);
         res.status(200).json({
-            sucess: true,
+            success: true,
             data:reservation
         });
     }catch(error){
         console.log(error);
         return res.status(500).json({
-            sucess:false,
+            success:false,
             massage:'Cannot Order Food'
+        });
+    }
+};
+
+exports.removeFood=async (req,res,next)=>{
+    try{
+        let reservation = await Reservation.findById(req.params.id);
+        if(!reservation){
+            return res.status(404).json({success:false,massage:`No reservation with the id of ${req.params.id}`});
+        }
+        if(reservation.user.toString()!==req.user.id&&req.user.role!=='admin'){
+            return res.status(401).json({
+                success:false,
+                massage:`User ${req.user.id} is not authorize to delete this bootcamp`
+            });
+        }
+        if(!reservation.findById(req.body.id)){
+            return res.status(404).json({success:false,massage:`No food order with the id of ${req.body.id}`})
+        }
+        reservation.removeItem(req.body.id);
+        res.status(200).json({
+            success: true,
+            data:reservation
+        });
+    }catch(error){
+        console.log(error);
+        return res.status(500).json({
+            success:false,
+            massage:'Cannot delete Reservation'
         });
     }
 };
