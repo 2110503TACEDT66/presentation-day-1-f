@@ -93,7 +93,7 @@ exports.addReservation=async (req,res,next)=>{
                 message: 'Reservation must be befor restaurant close time 1 hour'
             });
         }
-        const reservation = await Reservation.create(req.body);
+        const reservation = (await Reservation.create(req.body));
         res.status(201).json({
             success: true,
             data:reservation
@@ -246,10 +246,7 @@ exports.removeFood=async (req,res,next)=>{
                 massage:`User ${req.user.id} is not authorize to delete this bootcamp`
             });
         }
-        if(!reservation.findById(req.body.id)){
-            return res.status(404).json({success:false,massage:`No food order with the id of ${req.body.id}`})
-        }
-        reservation.removeItem(req.body.id);
+        reservation.removeItem(req.params.food);
         res.status(200).json({
             success: true,
             data:reservation
@@ -258,7 +255,7 @@ exports.removeFood=async (req,res,next)=>{
         console.log(error);
         return res.status(500).json({
             success:false,
-            massage:'Cannot delete Reservation'
+            massage:'Cannot delete Food order'
         });
     }
 };
