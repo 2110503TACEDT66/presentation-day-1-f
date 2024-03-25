@@ -24,7 +24,7 @@ exports.getReservations=async (req,res,next)=>{
         console.log(error);
         return res.status(500).json({
             success:false,
-            massage:'Cannot find Reservation'
+            message:'Cannot find Reservation'
         });
     }
 };
@@ -40,7 +40,7 @@ exports.getReservation=async (req,res,next)=>{
             select: 'price' 
           });
         if(!reservation){
-            return res.status(404).json({success:false,massage:`No reservation with the id of ${req.parms.id}`});
+            return res.status(404).json({success:false,message:`No reservation with the id of ${req.parms.id}`});
         }
         let totalPrice = 0;
         reservation.foodOrder.forEach(menuItem => {
@@ -55,7 +55,7 @@ exports.getReservation=async (req,res,next)=>{
         console.log(error);
         return res.status(500).json({
             success:false,
-            massage:'Cannot find Reservation'
+            message:'Cannot find Reservation'
         });
     }
 };
@@ -68,12 +68,12 @@ exports.addReservation=async (req,res,next)=>{
         if(existedReservation.length>=3&&req.user.role!=='admin'){
             return res.status(400).json({
                 success:false,
-                massage:`The user with the id ${req.user.id} has already made 3 reservation`
+                message:`The user with the id ${req.user.id} has already made 3 reservation`
             });
         }
         const restaurant = await Restaurant.findById(req.params.restaurantId);
         if(!restaurant){
-            return res.status(404).json({success:false,massage:`No restaurant with the id of ${req.parms.restaurantId}`});
+            return res.status(404).json({success:false,message:`No restaurant with the id of ${req.parms.restaurantId}`});
         }
 
         //Check in open-close range
@@ -111,7 +111,7 @@ exports.addReservation=async (req,res,next)=>{
         console.log(error);
         return res.status(500).json({
             success:false,
-            massage:'Cannot Create Reservation'
+            message:'Cannot Create Reservation'
         });
     }
 };
@@ -126,7 +126,7 @@ exports.updateReservation=async (req,res,next)=>{
         if(reservation.user.toString()!==req.user.id&&req.user.role!=='admin'){
             return res.status(401).json({
                 success:false,
-                massage:`User ${req.user.id} is not authorize to update this bootcamp`
+                message:`User ${req.user.id} is not authorize to update this bootcamp`
             });
         }
 
@@ -171,7 +171,7 @@ exports.updateReservation=async (req,res,next)=>{
         console.log(error);
         return res.status(500).json({
             success:false,
-            massage:'Cannot update Reservation'
+            message:'Cannot update Reservation'
         });
     }
 };
@@ -185,7 +185,7 @@ exports.deleteReservation=async (req,res,next)=>{
         if(reservation.user.toString()!==req.user.id&&req.user.role!=='admin'){
             return res.status(401).json({
                 success:false,
-                massage:`User ${req.user.id} is not authorize to delete this bootcamp`
+                message:`User ${req.user.id} is not authorize to delete this bootcamp`
             });
         }
         await reservation.deleteOne();
@@ -197,7 +197,7 @@ exports.deleteReservation=async (req,res,next)=>{
         console.log(error);
         return res.status(500).json({
             success:false,
-            massage:'Cannot delete Reservation'
+            message:'Cannot delete Reservation'
         });
     }
 };
@@ -208,27 +208,27 @@ exports.orderFood =async (req,res,next)=>{
         if(!reservation){
             return res.status(400).json({
                 success:false,
-                massage:`Cannot find reservation with id of ${req.params.id}`
+                message:`Cannot find reservation with id of ${req.params.id}`
             });
         }
         if(reservation.user.toString()!==req.user.id&&req.user.role!=='admin'){
             return res.status(401).json({
                 success:false,
-                massage:`User ${req.user.id} is not authorize to delete this bootcamp`
+                message:`User ${req.user.id} is not authorize to delete this bootcamp`
             });
         }
         if(reservation.foodOrder.length>=10&&req.user.role!=='admin'){
             return res.status(400).json({
                 success:false,
-                massage:`User with the id ${req.user.id} has already order more than 10 item`
+                message:`User with the id ${req.user.id} has already order more than 10 item`
             });
         }
         const item = await Menu.findById(req.body.id);
         if(!item){
-            return res.status(404).json({success:false,massage:`There are no such item on menu`});
+            return res.status(404).json({success:false,message:`There are no such item on menu`});
         }
         if(!item.restaurant.equals(reservation.restaurant)){
-            return res.status(404).json({success:false,massage:`Your reserved restaurant does not have the current item`});
+            return res.status(404).json({success:false,message:`Your reserved restaurant does not have the current item`});
         }
         reservation.addItem(item);
         res.status(200).json({
@@ -239,7 +239,7 @@ exports.orderFood =async (req,res,next)=>{
         console.log(error);
         return res.status(500).json({
             success:false,
-            massage:'Cannot Order Food'
+            message:'Cannot Order Food'
         });
     }
 };
@@ -248,12 +248,12 @@ exports.removeFood=async (req,res,next)=>{
     try{
         let reservation = await Reservation.findById(req.params.id);
         if(!reservation){
-            return res.status(404).json({success:false,massage:`No reservation with the id of ${req.params.id}`});
+            return res.status(404).json({success:false,message:`No reservation with the id of ${req.params.id}`});
         }
         if(reservation.user.toString()!==req.user.id&&req.user.role!=='admin'){
             return res.status(401).json({
                 success:false,
-                massage:`User ${req.user.id} is not authorize to delete this bootcamp`
+                message:`User ${req.user.id} is not authorize to delete this bootcamp`
             });
         }
         reservation.removeItem(req.params.food);
@@ -265,7 +265,7 @@ exports.removeFood=async (req,res,next)=>{
         console.log(error);
         return res.status(500).json({
             success:false,
-            massage:'Cannot delete Food order'
+            message:'Cannot delete Food order'
         });
     }
 };
