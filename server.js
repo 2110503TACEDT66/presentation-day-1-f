@@ -49,7 +49,7 @@ const server = app.listen(PORT, console.log('Server running in ', process.env.HO
 
 //handle rejection
 process.on('unhandledRejection',(err,promise)=>{
-    console.log(`Error: ${err.massage}`);
+    console.log(`Error: ${err.message}`);
     //close server and exit
     server.close(()=>process.exit(1));
 });

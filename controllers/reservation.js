@@ -121,7 +121,7 @@ exports.updateReservation=async (req,res,next)=>{
         
         let reservation = await Reservation.findById(req.params.id);
         if(!reservation){
-            return res.status(404).json({success:false,massage:`No reservation with the id of ${req.params.id}`});
+            return res.status(404).json({success:false,message:`No reservation with the id of ${req.params.id}`});
         }
         if(reservation.user.toString()!==req.user.id&&req.user.role!=='admin'){
             return res.status(401).json({
@@ -180,7 +180,7 @@ exports.deleteReservation=async (req,res,next)=>{
     try{
         let reservation = await Reservation.findById(req.params.id);
         if(!reservation){
-            return res.status(404).json({success:false,massage:`No reservation with the id of ${req.params.id}`});
+            return res.status(404).json({success:false,message:`No reservation with the id of ${req.params.id}`});
         }
         if(reservation.user.toString()!==req.user.id&&req.user.role!=='admin'){
             return res.status(401).json({
