@@ -13,7 +13,7 @@ exports.getMenu = async (req,res,next)=>{
         }
         res.status(200).json({
             success:true,
-            date:menu});
+            data:menu});
     }catch(err){
         res.status(400).json({success:false,message:'Cannot find Menu'});
     }
