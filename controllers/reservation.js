@@ -37,7 +37,7 @@ exports.getReservation=async (req,res,next)=>{
         }).populate({
             path: 'foodOrder', 
             model: 'Menu',
-            select: 'price' 
+            select: 'name price'
           });
         if(!reservation){
             return res.status(404).json({success:false,message:`No reservation with the id of ${req.parms.id}`});
